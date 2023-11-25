@@ -3,6 +3,7 @@ package com.example.kennedycalculator;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.widget.EditText;
 
@@ -34,7 +35,17 @@ public class MainActivity extends AppCompatActivity {
         String leftStr = oldStr.substring(0, cursorPos);
         String rightStr = oldStr.substring(cursorPos);
 
-        display.setText(String.format("%s%s%s", leftStr, strToAdd, rightStr));
+        if(getString(R.string.display).equals(display.getText().toString())){
+            display.setText(strToAdd);
+            display.setSelection(cursorPos + 1);
+
+        } else {
+            display.setText(String.format("%s%s%s", leftStr, strToAdd, rightStr));
+
+            display.setSelection(cursorPos + 1);
+        }
+
+
     }
 
     public void zeroBtn(View view){
@@ -78,11 +89,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void addBtn(View view){
-        updateText("0");
+        updateText("+");
     }
 
     public void subtractBtn(View view){
-        updateText("+");
+        updateText("-");
     }
 
     public void multiplyBtn(View view){
@@ -94,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void clearBtn(View view){
-        updateText("");
+        display.setText("");
     }
 
     public void exponentBtn(View view){
@@ -110,11 +121,43 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void parenthesisBtn(View view){
-        updateText("");
+        int cursPos = display.getSelectionStart();
+        int openParenthesis = 0;
+        int closeParenthesis = 0;
+        int textLength = display.getText().length();
+
+        for (int i = 0; i < cursPos; i++) {
+            if(display.getText().toString().substring(i, i+1).equals("(")){
+                openParenthesis += 1;
+            }
+            if(display.getText().toString().substring(i, i+1).equals(")")){
+                closeParenthesis += 1;
+            }
+        }
+
+        if(openParenthesis == closeParenthesis || display.getText().toString().substring(textLength-1, textLength).equals("(")){
+            updateText("(");
+        }
+
+        else if(closeParenthesis < openParenthesis && !display.getText().toString().substring(textLength-1, textLength).equals("c")){
+            updateText(")");
+        }
+        display.setSelection(cursPos + 1);
     }
 
     public void backspaceBtn(View view){
-        updateText("");
+        int cursorPos = display.getSelectionStart();
+        int textLen = display.getText().length();
+
+        if(cursorPos != 0 && textLen != 0){
+            SpannableStringBuilder selection = (SpannableStringBuilder) display.getText();
+
+            selection.replace(cursorPos - 1, cursorPos, "");
+
+            display.setText(selection);
+
+            display.setSelection(cursorPos - 1);
+        }
     }
 
     public void pointBtn(View view){

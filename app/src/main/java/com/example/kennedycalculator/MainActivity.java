@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.widget.EditText;
+import org.mariuszgromada.math.mxparser.*;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -117,7 +118,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void equalsBtn(View view){
-        updateText("");
+
+        String userExpression = display.getText().toString();
+
+        userExpression = userExpression.replaceAll("÷", "/");
+
+        userExpression = userExpression.replaceAll("×", "*");
+
+        Expression exp = new Expression(userExpression);
+
+        String result = String.valueOf(exp.calculate());
+
+        display.setText(result);
+
+        display.setSelection(result.length());
     }
 
     public void parenthesisBtn(View view){
